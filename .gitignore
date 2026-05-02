@@ -5,6 +5,10 @@ __pycache__/
 .ipynb_checkpoints/
 Thumbs.db
 
+# Excluded UNSW-NB15 dataset files
+UNSW_NB15_*.csv
+NUSW-NB15_features.csv
+
 # Generated capture and live-monitor artifacts
 captures/
 live_*.pcap
