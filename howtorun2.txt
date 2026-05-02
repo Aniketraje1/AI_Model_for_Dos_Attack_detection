@@ -1,0 +1,80 @@
+Window 1
+
+Enable-NetFirewallRule -DisplayName "File and Printer Sharing (Echo Request - ICMPv4-In)"
+
+Set-NetConnectionProfile -InterfaceAlias "WiFi" -NetworkCategory Private
+
+
+Set-Location "C:\Users\anike\Downloads\Infodat_projects"
+$capDir = "C:\Users\anike\Downloads\Infodat_projects\captures"
+
+Start-Process -FilePath "C:\Program Files\Wireshark\dumpcap.exe" `
+  -ArgumentList "-i","6","-b","duration:15","-b","files:200","-w","$capDir\live.pcapng" `
+  -PassThru
+
+
+
+Set-Location "C:\Users\anike\Downloads\Infodat_projects"
+docker compose down
+
+
+
+#Set-Location "C:\Users\anike\Downloads\Infodat_projects"
+docker compose up -d
+docker ps
+curl http://localhost:8080/health
+
+
+
+
+
+
+Optional check in the same window after 10-20 seconds:
+
+Get-ChildItem "C:\Users\anike\Downloads\Infodat_projects\captures" -Filter "live_*.pcapng" |
+  Sort-Object LastWriteTime |
+  Select-Object -Last 5 Name,Length,LastWriteTime
+
+
+
+
+
+
+Window 2
+
+Set-Location "C:\Users\anike\Downloads\Infodat_projects"
+py -3.11 -u .\dos_live_detector.py --prob-threshold 0.90
+
+
+
+
+
+
+Window 3
+
+
+Get-Content "C:\Users\anike\Downloads\Infodat_projects\captures\dos_live_detection.log"  -Wait -Tail 30 | Select-String -Pattern "confirmed_alerts"
+
+
+
+
+
+
+Optional
+
+Get-Content "C:\Users\anike\Downloads\Infodat_projects\captures\dos_live_detection.log" -Wait -Tail 30
+
+
+stop 
+Get-CimInstance Win32_Process |
+  Where-Object {
+    $_.Name -eq 'dumpcap.exe' -or
+    ($_.Name -eq 'python.exe' -and $_.CommandLine -match 'dos_live_detector.py')
+  } |
+  ForEach-Object { Stop-Process -Id $_.ProcessId -Force }
+
+Set-Location "C:\Users\anike\Downloads\Infodat_projects"
+docker compose down
+
+
+#& "c:\Users\anike\Downloads\Attack datasets\rogueshield311\Scripts\python.exe" c:/Users/anike/Downloads/Infodat_projects/Main.py
