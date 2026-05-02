@@ -1,0 +1,19 @@
+__pycache__/
+*.py[cod]
+*.keras
+*.joblib
+.ipynb_checkpoints/
+Thumbs.db
+
+# Generated capture and live-monitor artifacts
+captures/
+live_*.pcap
+live_*.pcapng
+classification_live.log
+classification_live.csv
+classifier_proc.out.log
+classifier_proc.err.log
+dumpcap_live.log
+live_collection_runner_stdout.log
+live_non_ddos_current.csv
+live_non_ddos_current.summary.json
